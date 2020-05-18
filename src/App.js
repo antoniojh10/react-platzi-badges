@@ -1,12 +1,12 @@
 import React from "react";
 import "./index.css";
 
-import Badge from "./components/Badge";
+import BadgeNew from "./pages/BadgeNew";
 
 function App() {
   return (
     <div>
-      <Badge />
+      <BadgeNew />
     </div>
   );
 }

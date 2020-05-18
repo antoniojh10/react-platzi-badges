@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 
-import "../components/styles/BadgeNew.css";
-import logo from "../images/logo.svg";
+import "./styles/BadgeNew.css";
+import header from "../images/badge-header.svg";
 
 import Badge from "../components/Badge";
+import BadgeForm from "../components/BadgeForm";
 import Navbar from "../components/Navbar";
 
 class BadgeNew extends Component {
@@ -12,7 +13,7 @@ class BadgeNew extends Component {
       <div>
         <Navbar />
         <div className="BadgeNew__hero">
-          <img className="img-fluid" src={logo} alt="Logo" />
+          <img className="img-fluid" src={header} alt="Logo" />
         </div>
 
         <div className="container">
@@ -25,6 +26,10 @@ class BadgeNew extends Component {
                 jobTitle="FrontEnd Engineer"
                 twitter="Sparragus"
               />
+            </div>
+
+            <div className="col">
+              <BadgeForm />
             </div>
           </div>
         </div>

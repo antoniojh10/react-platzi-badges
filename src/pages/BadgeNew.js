@@ -8,6 +8,31 @@ import BadgeForm from "../components/BadgeForm";
 import Navbar from "../components/Navbar";
 
 class BadgeNew extends Component {
+  state = {
+    form: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      jobTitle: "",
+      twitter: "",
+    },
+  };
+  handleChange = (e) => {
+    console.log("Resiviendo en BadgeNew...");
+    /* this.setState({
+      form: {
+        [e.target.name]: e.target.value,
+      },
+    }); */
+    // Para que no se reescriba todo
+
+    this.setState({
+      form: {
+        ...this.state.form,
+        [e.target.name]: e.target.value,
+      },
+    });
+  };
   render() {
     return (
       <div>
@@ -20,16 +45,20 @@ class BadgeNew extends Component {
           <div className="row">
             <div className="col">
               <Badge
-                firstName="Richard"
-                lastName="Kaufman"
+                firstName={this.state.form.firstName}
+                lastName={this.state.form.lastName}
                 avatarUrl=""
-                jobTitle="FrontEnd Engineer"
-                twitter="Sparragus"
+                email={this.state.form.email}
+                jobTitle={this.state.form.jobTitle}
+                twitter={this.state.form.twitter}
               />
             </div>
 
             <div className="col">
-              <BadgeForm />
+              <BadgeForm
+                onChange={this.handleChange}
+                formValues={this.state.form}
+              />
             </div>
           </div>
         </div>

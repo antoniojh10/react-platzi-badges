@@ -2,20 +2,25 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import BadgesList from "../components/BadgesList";
+import PageLoading from "../components/PageLoading";
 import "./styles/Badges.css";
 import confLogo from "../images/platziconf-logo.svg";
+
+import api from "../api";
 
 class Badges extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: true,
+      error: null,
       data: [],
     };
   }
 
   componentDidMount() {
-    this.timeoutId = setTimeout(() => {
+    /* this.timeoutId = setTimeout(() => {
       this.setState({
         data: [
           {
@@ -50,8 +55,30 @@ class Badges extends Component {
           },
         ],
       });
-    }, 3000);
+    }, 3000); */
+    // Para realizar la peticion al API:
+    this.fetchBadges();
   }
+
+  fetchBadges = async () => {
+    this.setState({
+      loading: true,
+      error: null,
+    });
+    try {
+      const data = await api.badges.list();
+      console.log(data);
+      this.setState({
+        loading: false,
+        data: data,
+      });
+    } catch (error) {
+      this.setState({
+        loading: false,
+        error: error,
+      });
+    }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     console.log({ prevProps, prevState });
@@ -63,6 +90,12 @@ class Badges extends Component {
   }
 
   render() {
+    if (this.state.loading) {
+      return <PageLoading />;
+    }
+    if (this.state.error) {
+      return `Error: ${this.state.error.message}`;
+    }
     return (
       <React.Fragment>
         <div className="Badges">

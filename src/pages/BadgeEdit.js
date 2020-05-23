@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import md5 from "md5";
 
-import "./styles/BadgeNew.css";
+import "./styles/BadgeEdit.css";
 import header from "../images/platziconf-logo.svg";
 
 import Badge from "../components/Badge";
@@ -11,9 +11,9 @@ import PageLoading from "../components/PageLoading";
 
 import api from "../api";
 
-class BadgeNew extends Component {
+class BadgeEdit extends Component {
   state = {
-    loading: false,
+    loading: true,
     error: null,
     form: {
       firstName: "",
@@ -24,20 +24,26 @@ class BadgeNew extends Component {
     },
   };
   handleChange = (e) => {
-    console.log("Resiviendo en BadgeNew...");
-    /* this.setState({
-      form: {
-        [e.target.name]: e.target.value,
-      },
-    }); */
-    // Para que no se reescriba todo
-
     this.setState({
       form: {
         ...this.state.form,
         [e.target.name]: e.target.value,
       },
     });
+  };
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = async () => {
+    this.setState({ loading: true, error: null });
+    try {
+      const data = await api.badges.read(this.props.match.params.badgeId);
+      this.setState({ loading: false, form: data });
+    } catch (error) {
+      this.setState({ loading: false, error: error });
+    }
   };
 
   handleSubmit = async (e) => {
@@ -53,7 +59,7 @@ class BadgeNew extends Component {
     });
 
     try {
-      await api.badges.create(this.state.form);
+      await api.badges.update(this.props.match.params.badgeId, this.state.form);
       this.setState({ loading: false });
 
       this.props.history.push("/badges");
@@ -70,9 +76,9 @@ class BadgeNew extends Component {
     }
     return (
       <React.Fragment>
-        <div className="BadgeNew__hero">
+        <div className="BadgeEdit__hero">
           <img
-            className="img-fluid BadgeNew__hero-img"
+            className="img-fluid BadgeEdit__hero-img"
             src={header}
             alt="Logo"
           />
@@ -92,7 +98,7 @@ class BadgeNew extends Component {
 
             <div className="col">
               <BadgeForm
-                title="New Attendant"
+                title="Edit Attendant"
                 onChange={this.handleChange}
                 onSubmit={this.handleSubmit}
                 formValues={this.state.form}
@@ -106,4 +112,4 @@ class BadgeNew extends Component {
   }
 }
 
-export default BadgeNew;
+export default BadgeEdit;

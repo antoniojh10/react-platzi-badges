@@ -3,6 +3,32 @@ import { Link } from "react-router-dom";
 
 import "./styles/BadgesList.css";
 
+class BadgesListItem extends Component {
+  render() {
+    const badge = this.props.badge;
+    return (
+      <div className="BadgesListItem">
+        <img
+          className="BadgesListItem__avatar"
+          src={badge.avatarUrl}
+          alt={`${badge.firstName} ${badge.lastName}`}
+        />
+        <div>
+          <div className="font-weight-bold">
+            {badge.firstName} {badge.lastName}
+          </div>
+
+          <a href={`https://www.twitter.com/${badge.twitter}`}>
+            @{badge.twitter}
+          </a>
+
+          <div>{badge.jobTitle}</div>
+        </div>
+      </div>
+    );
+  }
+}
+
 class BadgesList extends Component {
   render() {
     if (this.props.badges.length === 0) {
@@ -17,26 +43,16 @@ class BadgesList extends Component {
     }
     return (
       <div className="BadgesList">
-        <ul>
+        <ul className="list-unstyled">
           {this.props.badges.map((badge) => {
             return (
-              <li className="BadgesListItem" key={badge.id}>
-                <img
-                  className="BadgesListItem__avatar"
-                  src={badge.avatarUrl}
-                  alt={`${badge.firstName} ${badge.lastName}`}
-                />
-                <div>
-                  <div className="font-weight-bold">
-                    {badge.firstName} {badge.lastName}
-                  </div>
-
-                  <a href={`https://www.twitter.com/${badge.twitter}`}>
-                    @{badge.twitter}
-                  </a>
-
-                  <div>{badge.jobTitle}</div>
-                </div>
+              <li key={badge.id}>
+                <Link
+                  className="text-reset text-decoration-none"
+                  to={`/badges/${badge.id}/edit`}
+                >
+                  <BadgesListItem badge={badge} />
+                </Link>
               </li>
             );
           })}

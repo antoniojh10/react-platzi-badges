@@ -1,5 +1,4 @@
 const BASE_URL = "http://localhost:3001";
-//const BASE_URL = "http://192.168.0.111:3001";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const randomNumber = (min = 0, max = 1) =>
@@ -29,6 +28,7 @@ const api = {
       //return [];
     },
     create(badge) {
+      // throw new Error("500: Server Error");
       return callApi(`/badges`, {
         method: "POST",
         body: JSON.stringify(badge),

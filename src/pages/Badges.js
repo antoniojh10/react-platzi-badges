@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import BadgesList from "../components/BadgesList";
 import PageLoading from "../components/PageLoading";
+import PageError from "../components/PageError";
+import MiniLoader from "../components/MiniLoader";
 import "./styles/Badges.css";
 import confLogo from "../images/platziconf-logo.svg";
 
@@ -15,7 +17,7 @@ class Badges extends Component {
     this.state = {
       loading: true,
       error: null,
-      data: [],
+      data: undefined,
     };
   }
 
@@ -58,6 +60,8 @@ class Badges extends Component {
     }, 3000); */
     // Para realizar la peticion al API:
     this.fetchBadges();
+
+    this.intervalId = setInterval(this.fetchBadges, 5000);
   }
 
   fetchBadges = async () => {
@@ -67,7 +71,6 @@ class Badges extends Component {
     });
     try {
       const data = await api.badges.list();
-      console.log(data);
       this.setState({
         loading: false,
         data: data,
@@ -80,21 +83,18 @@ class Badges extends Component {
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log({ prevProps, prevState });
-  }
+  /*  componentDidUpdate(prevProps, prevState) {} */
 
   componentWillUnmount() {
-    console.log("Desmontando...");
-    clearTimeout(this.timeoutId);
+    clearTimeout(this.intervalId);
   }
 
   render() {
-    if (this.state.loading) {
+    if (this.state.loading && !this.state.data) {
       return <PageLoading />;
     }
     if (this.state.error) {
-      return `Error: ${this.state.error.message}`;
+      return <PageError error={this.state.error} />;
     }
     return (
       <React.Fragment>
@@ -122,6 +122,7 @@ class Badges extends Component {
               <BadgesList badges={this.state.data} />
             </div>
           </div>
+          {this.state.loading && <MiniLoader />}
         </div>
       </React.Fragment>
     );

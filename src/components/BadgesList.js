@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import "./styles/BadgesList.css";
@@ -29,37 +29,72 @@ class BadgesListItem extends Component {
   }
 }
 
-class BadgesList extends Component {
-  render() {
-    if (this.props.badges.length === 0) {
+function useSearchBadges(badges) {
+  const [query, setQuery] = useState("");
+
+  const [filteredBadges, setFilteredBadges] = useState(badges);
+
+  useMemo(() => {
+    const result = badges.filter((badge) => {
+      const wholeName = `${badge.firstName} ${badge.lastName}`.toLowerCase();
+      const jobTitle = badge.jobTitle.toLowerCase();
+      const twitter = badge.twitter.toLowerCase();
       return (
-        <div>
-          <h3>No badges were found</h3>
-          <Link className="btn btn-primary" to="/badges/new">
-            Create New Badge
-          </Link>
-        </div>
+        wholeName.includes(query.toLowerCase()) ||
+        jobTitle.includes(query.toLowerCase()) ||
+        twitter.includes(query.toLowerCase())
       );
-    }
+    });
+
+    setFilteredBadges(result);
+  }, [badges, query]);
+
+  return { query, setQuery, filteredBadges };
+}
+
+function BadgesList(props) {
+  const badges = props.badges;
+  const { query, setQuery, filteredBadges } = useSearchBadges(badges);
+
+  if (badges.length === 0) {
     return (
-      <div className="BadgesList">
-        <ul className="list-unstyled">
-          {this.props.badges.map((badge) => {
-            return (
-              <li key={badge.id}>
-                <Link
-                  className="text-reset text-decoration-none"
-                  to={`/badges/${badge.id}`}
-                >
-                  <BadgesListItem badge={badge} />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <div>
+        <h3>No badges were found</h3>
+        <Link className="btn btn-primary" to="/badges/new">
+          Create New Badge
+        </Link>
       </div>
     );
   }
+  return (
+    <div className="BadgesList">
+      <div className="form-group">
+        <label>Filter Badges</label>
+        <input
+          type="text"
+          className="form-control"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
+        />
+      </div>
+      <ul className="list-unstyled">
+        {filteredBadges.map((badge) => {
+          return (
+            <li key={badge.id}>
+              <Link
+                className="text-reset text-decoration-none"
+                to={`/badges/${badge.id}`}
+              >
+                <BadgesListItem badge={badge} />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
 
 export default BadgesList;
